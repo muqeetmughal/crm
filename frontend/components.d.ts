@@ -30,6 +30,7 @@ declare module 'vue' {
     AvatarIcon: typeof import('./src/components/Icons/AvatarIcon.vue')['default']
     BrandLogo: typeof import('./src/components/BrandLogo.vue')['default']
     CalendarIcon: typeof import('./src/components/Icons/CalendarIcon.vue')['default']
+    CalendarView: typeof import('./src/components/Calendar/CalendarView.vue')['default']
     CallArea: typeof import('./src/components/Activities/CallArea.vue')['default']
     CallLogDetailModal: typeof import('./src/components/Modals/CallLogDetailModal.vue')['default']
     CallLogModal: typeof import('./src/components/Modals/CallLogModal.vue')['default']

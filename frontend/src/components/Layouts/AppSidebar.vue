@@ -234,6 +234,11 @@ const links = [
     icon: Email2Icon,
     to: 'Email Templates',
   },
+  {
+    label: 'Appointments',
+    icon: Email2Icon,
+    to: 'Appointments',
+  },
 ]
 
 const allViews = computed(() => {
