@@ -8,6 +8,8 @@ import AppointmentModal from '@/components/Modals/AppointmentModal.vue'
 import QuickEntryModal from '@/components/Modals/QuickEntryModal.vue'
 import { createListResource } from 'frappe-ui'
 import tippy from 'tippy.js'
+import { call } from 'frappe-ui'
+
 import 'tippy.js/dist/tippy.css'; // Optional: Import default CSS
 const modals = reactive({
   showAppointmentModal: false,
@@ -42,6 +44,10 @@ const appointments = createListResource({
   },
 })
 
+const refresh = () => {
+  appointments.reload()
+}
+
 // Setup FullCalendar options
 const calendarOptions = reactive({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -62,6 +68,11 @@ const calendarOptions = reactive({
       theme: 'light-border',
     });
   },
+  eventClick: handleEventClick,
+
+  // eventContent: (arg) => {
+  //   return arg.event.title
+  // },
 })
 
 // 💡 Dynamically sync calendar events with appointments.data
@@ -70,9 +81,25 @@ watchEffect(() => {
     calendarOptions.events = appointments.data
   }
 })
+function handleEventClick(info) {
+  
+  console.log('Event clicked:', info.event._def.publicId)
 
+  deleteAppointment(info.event._def.publicId)
+
+  
+}
+
+async function deleteAppointment(name) {
+  await call('frappe.client.delete', {
+    doctype: 'Appointment',
+    name,
+  })
+  refresh()
+}
 function handleDateClick(info) {
-  form.date = info.dateStr
+  console.log(info)
+  form.scheduled_time = info.date
   modals.showAppointmentModal = true
 }
 
@@ -95,7 +122,7 @@ function closeModal() {
   modals.showAppointmentModal = false
   isEditMode.value = false
   form.title = ''
-  form.date = ''
+  form.scheduled_time = ''
 }
 </script>
 
@@ -107,9 +134,9 @@ function closeModal() {
     <AppointmentModal
     v-if="modals.showAppointmentModal"
       v-model="modals.showAppointmentModal"
-      :quickEntry="modals.showQuickEntryModal"
+      v-model:quickEntry="modals.showQuickEntryModal"
       :defaults="form"
-      @submit="handleSubmit"
+      @refresh="refresh"
     />
 
     <QuickEntryModal
